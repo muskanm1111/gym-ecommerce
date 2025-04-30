@@ -151,7 +151,7 @@ const Header = () => {
   return (
     <header className="w-full">
       {/* Top bar */}
-      <div className="bg-orange-600 text-white py-2 px-4">
+      <div className="bg-orange-500 text-white py-2 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex space-x-4">
             <Link href="#" className="hover:text-orange-200 transition-colors">
@@ -176,12 +176,11 @@ const Header = () => {
       </div>
 
       {/* Main header */}
-      <div className="bg-white text-black  py-4 px-4">
+      <div className="bg-white text-black   py-4 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="text-orange-500 font-bold text-3xl">
-            <Image src="/logo3.png" alt=" " width={200} height={100} className="border" /> 
-          
+            <Image src="/logo3.png" alt=" " width={200} height={100} />
           </Link>
 
           {/* Desktop Navigation */}
