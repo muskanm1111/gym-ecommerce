@@ -191,14 +191,14 @@ const Header = () => {
                   <NavigationMenuItem key={item.name}>
                     {item.megaMenu ? (
                       <>
-                        <NavigationMenuTrigger className="bg-transparent hover:bg-orange-500 text-black">
-                          <span className="flex items-center">
+                        <NavigationMenuTrigger className="bg-transparent hover:bg-orange-500 hover:text-orange-500 text-black">
+                          <span className="flex items-center text-black">
                             {item.name}
                             {item.badge && (
                               <span
                                 className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
                                   item.badge === "HOT"
-                                    ? "bg-green-500"
+                                    ? "bg-green-500 text-white"
                                     : item.badge === "SALE"
                                     ? "bg-green-500 text-white"
                                     : "bg-green-500 text-white"
@@ -229,7 +229,7 @@ const Header = () => {
                                         <li key={subItem}>
                                           <Link
                                             href="#"
-                                            className="text-gray-800 hover:text-white transition-colors"
+                                            className="text-gray-800 hover:text-orange-500 transition-colors"
                                           >
                                             {subItem}
                                           </Link>
@@ -255,6 +255,7 @@ const Header = () => {
                                           <Image
                                             src={
                                               feature.image ||
+                                              "/placeholder.svg" ||
                                               "/placeholder.svg"
                                             }
                                             alt={feature.name}
@@ -279,16 +280,16 @@ const Header = () => {
                       </>
                     ) : (
                       <Link href={item.path} legacyBehavior passHref>
-                        <NavigationMenuLink className="bg-transparent hover:bg-gray-800 text-white p-2 flex items-center">
+                        <NavigationMenuLink className="bg-transparent hover:bg-orange-100 text-black p-2 flex items-center">
                           {item.name}
                           {item.badge && (
                             <span
                               className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
                                 item.badge === "HOT"
-                                  ? "bg-green-500"
+                                  ? "bg-green-500 text-white"
                                   : item.badge === "SALE"
-                                  ? "bg-rose-500"
-                                  : "bg-blue-500"
+                                  ? "bg-green-500 text-white"
+                                  : "bg-green-500 text-white"
                               }`}
                             >
                               {item.badge}
@@ -329,7 +330,7 @@ const Header = () => {
                     <input
                       type="text"
                       placeholder="Search..."
-                      className="w-full p-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full p-2 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </motion.div>
                 )}
@@ -396,12 +397,12 @@ const Header = () => {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-gray-900 overflow-hidden"
+            className="bg-white border-t border-gray-200 overflow-hidden"
           >
             <div className="container mx-auto py-4 px-4">
               <ul className="space-y-4">
                 {navItems.map((item) => (
-                  <li key={item.name} className="border-b border-gray-800 pb-2">
+                  <li key={item.name} className="border-b border-gray-200 pb-2">
                     {item.megaMenu ? (
                       <details className="group">
                         <summary className="flex justify-between items-center cursor-pointer list-none">
@@ -437,7 +438,7 @@ const Header = () => {
                                   <li key={subItem}>
                                     <Link
                                       href="#"
-                                      className="text-gray-400 hover:text-white transition-colors"
+                                      className="text-gray-700 hover:text-orange-500 transition-colors"
                                       onClick={closeMobileMenu}
                                     >
                                       {subItem}

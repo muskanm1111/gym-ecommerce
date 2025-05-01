@@ -8,20 +8,20 @@ export function useMediaQuery(query) {
   useEffect(() => {
     const media = window.matchMedia(query);
 
-    // Update the state with the current value
-    const updateMatches = () => {
-      setMatches(media.matches);
+    // Update the state initially
+    setMatches(media.matches);
+
+    // Define callback for media query change
+    const listener = (event) => {
+      setMatches(event.matches);
     };
 
-    // Set the initial value
-    updateMatches();
-
     // Add the callback as a listener
-    media.addEventListener("change", updateMatches);
+    media.addEventListener("change", listener);
 
-    // Remove the listener on cleanup
+    // Remove the listener when component unmounts
     return () => {
-      media.removeEventListener("change", updateMatches);
+      media.removeEventListener("change", listener);
     };
   }, [query]);
 
