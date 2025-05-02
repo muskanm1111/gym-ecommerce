@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useRouter } from "next/navigation";
 import {
   Facebook,
   Twitter,
@@ -15,6 +16,7 @@ import {
   Menu,
   X,
   ChevronDown,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,10 +36,68 @@ import {
 } from "@/components/ui/navigation-menu";
 
 const Header = () => {
+  const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartItemCount, setCartItemCount] = useState(0);
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // Load cart and wishlist data on client-side
+  useEffect(() => {
+    // Load from localStorage if available
+    const storedCart = localStorage.getItem("cart");
+    const storedWishlist = localStorage.getItem("wishlist");
+
+    if (storedCart) {
+      try {
+        const parsedCart = JSON.parse(storedCart);
+        setCartItems(parsedCart);
+
+        // Check if parsedCart is an array before using reduce
+        if (Array.isArray(parsedCart)) {
+          setCartItemCount(
+            parsedCart.reduce((total, item) => total + item.quantity, 0)
+          );
+        } else {
+          console.error("Parsed cart is not an array:", parsedCart);
+          // Reset the cart in localStorage and state
+          localStorage.setItem("cart", JSON.stringify([]));
+          setCartItems([]);
+          setCartItemCount(0);
+        }
+      } catch (error) {
+        console.error("Error parsing cart from localStorage", error);
+        // Reset the cart in localStorage and state
+        localStorage.setItem("cart", JSON.stringify([]));
+        setCartItems([]);
+        setCartItemCount(0);
+      }
+    }
+
+    if (storedWishlist) {
+      try {
+        const parsedWishlist = JSON.parse(storedWishlist);
+
+        // Check if parsedWishlist is an array
+        if (Array.isArray(parsedWishlist)) {
+          setWishlistCount(parsedWishlist.length);
+        } else {
+          console.error("Parsed wishlist is not an array:", parsedWishlist);
+          // Reset the wishlist in localStorage and state
+          localStorage.setItem("wishlist", JSON.stringify([]));
+          setWishlistCount(0);
+        }
+      } catch (error) {
+        console.error("Error parsing wishlist from localStorage", error);
+        // Reset the wishlist in localStorage and state
+        localStorage.setItem("wishlist", JSON.stringify([]));
+        setWishlistCount(0);
+      }
+    }
+  }, []);
 
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);
@@ -51,82 +111,86 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
+  const calculateCartTotal = () => {
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  };
+
   // Sample navigation data
   const navItems = [
     {
       name: "Home",
       path: "/",
-      badge: "HOT",
+      badge: null,
       megaMenu: null,
     },
     {
-      name: "Shop",
-      path: "/shop",
-      badge: "SALE",
+      name: "Products",
+      path: "/products",
+      badge: "NEW",
       megaMenu: {
         categories: [
-          { name: "Men", items: ["T-Shirts", "Shorts", "Hoodies", "Joggers"] },
           {
-            name: "Women",
-            items: ["Sports Bras", "Leggings", "Tops", "Shorts"],
-          },
-          {
-            name: "Equipment",
+            name: "Categories",
             items: [
-              "Dumbbells",
-              "Kettlebells",
-              "Resistance Bands",
-              "Yoga Mats",
+              {
+                name: "Protein Supplements",
+                path: "/products?category=protein",
+              },
+              { name: "Pre-Workout", path: "/products?category=pre-workout" },
+              { name: "Amino Acids", path: "/products?category=amino-acids" },
+              {
+                name: "Weight Gainers",
+                path: "/products?category=weight-gain",
+              },
             ],
           },
           {
-            name: "Accessories",
-            items: ["Water Bottles", "Gym Bags", "Gloves", "Towels"],
+            name: "Brands",
+            items: [
+              { name: "MuscleGain", path: "/products?brand=MuscleGain" },
+              { name: "ExtremeEnergy", path: "/products?brand=ExtremeEnergy" },
+              { name: "RecoveryPlus", path: "/products?brand=RecoveryPlus" },
+              { name: "PowerMax", path: "/products?brand=PowerMax" },
+            ],
+          },
+          {
+            name: "Special Collections",
+            items: [
+              { name: "New Arrivals", path: "/products?sort=newest" },
+              { name: "Best Sellers", path: "/products?sort=rating" },
+              { name: "Sale Items", path: "/products?sale=true" },
+            ],
           },
         ],
         featured: [
           {
-            name: "New Arrivals",
-            image: "/placeholder.svg?height=100&width=100",
+            name: "Whey Protein",
+            image: "/supplements/protein1.jpg",
+            path: "/products/whey-protein-powder",
           },
           {
-            name: "Best Sellers",
-            image: "/placeholder.svg?height=100&width=100",
-          },
-          {
-            name: "Sale Items",
-            image: "/placeholder.svg?height=100&width=100",
+            name: "Pre-Workout",
+            image: "/supplements/preworkout1.jpg",
+            path: "/products/pre-workout-energy-booster",
           },
         ],
       },
     },
     {
-      name: "Product",
-      path: "/product",
-      megaMenu: {
-        categories: [
-          {
-            name: "Fitness Trackers",
-            items: ["Smart Watches", "Bands", "Heart Rate Monitors"],
-          },
-          {
-            name: "Supplements",
-            items: ["Protein", "Pre-Workout", "Vitamins", "Recovery"],
-          },
-          { name: "Nutrition", items: ["Meal Plans", "Recipes", "Guides"] },
-        ],
-        featured: [
-          {
-            name: "Featured Products",
-            image: "/placeholder.svg?height=100&width=100",
-          },
-          { name: "Top Rated", image: "/placeholder.svg?height=100&width=100" },
-        ],
-      },
-    },
-    {
-      name: "Collection",
-      path: "/collection",
+      name: "About",
+      path: "/about",
       megaMenu: null,
     },
     {
@@ -135,21 +199,14 @@ const Header = () => {
       megaMenu: null,
     },
     {
-      name: "Pages",
-      path: "/pages",
-      badge: "NEW",
-      megaMenu: {
-        categories: [
-          { name: "About Us", items: ["Our Story", "Team", "Careers"] },
-          { name: "Contact", items: ["Support", "Locations", "Feedback"] },
-          { name: "Policies", items: ["Terms", "Privacy", "Returns"] },
-        ],
-      },
+      name: "Contact",
+      path: "/contact",
+      megaMenu: null,
     },
   ];
 
   return (
-    <header className="w-full">
+    <header className="w-full sticky top-0 z-40">
       {/* Top bar */}
       <div className="bg-orange-500 text-white py-2 px-6">
         <div className="container mx-auto flex justify-between items-center">
@@ -164,23 +221,27 @@ const Header = () => {
               <Instagram size={18} />
             </Link>
           </div>
+          <div className="hidden md:block">
+            <p className="text-sm">Free shipping on all orders over ₹999</p>
+          </div>
           <div>
             <Link
-              href="/login"
-              className="hover:text-orange-200 transition-colors"
+              href="/auth"
+              className="hover:text-orange-200 transition-colors flex items-center"
             >
-              LOG IN / REGISTER
+              <User size={16} className="mr-1" />
+              <span>LOG IN / REGISTER</span>
             </Link>
           </div>
         </div>
       </div>
 
       {/* Main header */}
-      <div className="bg-white text-black   py-4 px-4">
+      <div className="bg-white shadow-md py-4 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="text-orange-500 font-bold text-3xl">
-            <Image src="/logo3.png" alt=" " width={200} height={100} />
+            <Image src="/logo3.png" alt="Logo" width={200} height={100} />
           </Link>
 
           {/* Desktop Navigation */}
@@ -191,18 +252,12 @@ const Header = () => {
                   <NavigationMenuItem key={item.name}>
                     {item.megaMenu ? (
                       <>
-                        <NavigationMenuTrigger className="bg-transparent hover:bg-orange-500 hover:text-orange-500 text-black">
+                        <NavigationMenuTrigger className="bg-transparent hover:bg-orange-50 hover:text-orange-500 text-black">
                           <span className="flex items-center text-black">
                             {item.name}
                             {item.badge && (
                               <span
-                                className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                                  item.badge === "HOT"
-                                    ? "bg-green-500 text-white"
-                                    : item.badge === "SALE"
-                                    ? "bg-green-500 text-white"
-                                    : "bg-green-500 text-white"
-                                }`}
+                                className={`ml-2 text-xs px-1.5 py-0.5 rounded bg-green-500 text-white`}
                               >
                                 {item.badge}
                               </span>
@@ -226,12 +281,24 @@ const Header = () => {
                                     </h3>
                                     <ul className="space-y-1">
                                       {category.items.map((subItem) => (
-                                        <li key={subItem}>
+                                        <li
+                                          key={
+                                            typeof subItem === "string"
+                                              ? subItem
+                                              : subItem.name
+                                          }
+                                        >
                                           <Link
-                                            href="#"
+                                            href={
+                                              typeof subItem === "string"
+                                                ? "#"
+                                                : subItem.path
+                                            }
                                             className="text-gray-800 hover:text-orange-500 transition-colors"
                                           >
-                                            {subItem}
+                                            {typeof subItem === "string"
+                                              ? subItem
+                                              : subItem.name}
                                           </Link>
                                         </li>
                                       ))}
@@ -247,7 +314,7 @@ const Header = () => {
                                   <div className="grid grid-cols-2 gap-2">
                                     {item.megaMenu.featured.map((feature) => (
                                       <Link
-                                        href="#"
+                                        href={feature.path || "#"}
                                         key={feature.name}
                                         className="group"
                                       >
@@ -255,7 +322,6 @@ const Header = () => {
                                           <Image
                                             src={
                                               feature.image ||
-                                              "/placeholder.svg" ||
                                               "/placeholder.svg"
                                             }
                                             alt={feature.name}
@@ -280,18 +346,10 @@ const Header = () => {
                       </>
                     ) : (
                       <Link href={item.path} legacyBehavior passHref>
-                        <NavigationMenuLink className="bg-transparent hover:bg-orange-100 text-black p-2 flex items-center">
+                        <NavigationMenuLink className="bg-transparent hover:bg-orange-50 text-black p-2 flex items-center">
                           {item.name}
                           {item.badge && (
-                            <span
-                              className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                                item.badge === "HOT"
-                                  ? "bg-green-500 text-white"
-                                  : item.badge === "SALE"
-                                  ? "bg-green-500 text-white"
-                                  : "bg-green-500 text-white"
-                              }`}
-                            >
+                            <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-green-500 text-white">
                               {item.badge}
                             </span>
                           )}
@@ -322,16 +380,26 @@ const Header = () => {
                 {isSearchOpen && (
                   <motion.div
                     initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: "200px" }}
+                    animate={{ opacity: 1, width: "250px" }}
                     exit={{ opacity: 0, width: 0 }}
                     transition={{ duration: 0.3 }}
                     className="absolute right-0 top-full mt-2 z-50"
                   >
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      className="w-full p-2 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
+                    <form onSubmit={handleSearch} className="flex">
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search products..."
+                        className="w-full p-2 bg-white text-black border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                      <button
+                        type="submit"
+                        className="bg-orange-500 text-white p-2 rounded-r-md"
+                      >
+                        <Search size={18} />
+                      </button>
+                    </form>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -340,9 +408,11 @@ const Header = () => {
             {/* Wishlist */}
             <Link href="/wishlist" className="relative">
               <Heart size={20} />
-              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
 
             {/* Cart */}
@@ -350,9 +420,11 @@ const Header = () => {
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
                   <ShoppingCart size={20} />
-                  <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    0
-                  </span>
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {cartItemCount}
+                    </span>
+                  )}
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[350px] sm:w-[450px]">
@@ -363,25 +435,88 @@ const Header = () => {
                   {cartItems.length === 0 ? (
                     <div className="text-center py-10">
                       <ShoppingCart
-                        className="mx-auto mb-4"
+                        className="mx-auto mb-4 text-gray-400"
                         size={50}
                         strokeWidth={1}
                       />
                       <h3 className="text-lg font-medium">
                         Your cart is empty
                       </h3>
-                      <p className="text-sm text-muted-foreground mt-2">
+                      <p className="text-sm text-gray-500 mt-2">
                         Add some items to your cart to see them here.
                       </p>
+                      <Button
+                        className="mt-4 bg-orange-500 hover:bg-orange-600"
+                        onClick={() => router.push("/products")}
+                      >
+                        Browse Products
+                      </Button>
                     </div>
                   ) : (
-                    <div>{/* Cart items would go here */}</div>
+                    <div className="space-y-4">
+                      {cartItems.map((item) => (
+                        <div
+                          key={`${item.id}-${item.size}-${item.flavor}`}
+                          className="flex gap-4 py-2 border-b"
+                        >
+                          <div className="h-16 w-16 relative flex-shrink-0">
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fill
+                              style={{ objectFit: "cover" }}
+                              className="rounded-md"
+                            />
+                          </div>
+                          <div className="flex-grow">
+                            <h4 className="text-sm font-medium">{item.name}</h4>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {item.size && <span>Size: {item.size}</span>}
+                              {item.flavor && (
+                                <span> | Flavor: {item.flavor}</span>
+                              )}
+                            </div>
+                            <div className="flex justify-between items-center mt-2">
+                              <div className="text-sm">
+                                ₹{item.price.toLocaleString()} × {item.quantity}
+                              </div>
+                              <div className="text-sm font-medium">
+                                ₹{(item.price * item.quantity).toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                      <div className="border-t border-gray-200 pt-4 space-y-2">
+                        <div className="flex justify-between">
+                          <span>Subtotal</span>
+                          <span className="font-medium">
+                            ₹{calculateCartTotal().toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Shipping and taxes calculated at checkout
+                        </div>
+                      </div>
+
+                      <div className="pt-2 space-y-2">
+                        <Button
+                          className="w-full bg-orange-500 hover:bg-orange-600"
+                          onClick={() => router.push("/checkout")}
+                        >
+                          Checkout
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="w-full border-orange-500 text-orange-500 hover:bg-orange-50"
+                          onClick={() => router.push("/cart")}
+                        >
+                          View Cart
+                        </Button>
+                      </div>
+                    </div>
                   )}
-                </div>
-                <div className="border-t pt-4">
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600">
-                    Checkout
-                  </Button>
                 </div>
               </SheetContent>
             </Sheet>
@@ -397,7 +532,7 @@ const Header = () => {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-white border-t border-gray-200 overflow-hidden"
+            className="bg-white border-t border-gray-200 overflow-hidden shadow-md"
           >
             <div className="container mx-auto py-4 px-4">
               <ul className="space-y-4">
@@ -409,15 +544,7 @@ const Header = () => {
                           <div className="flex items-center">
                             {item.name}
                             {item.badge && (
-                              <span
-                                className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                                  item.badge === "HOT"
-                                    ? "bg-green-500"
-                                    : item.badge === "SALE"
-                                    ? "bg-rose-500"
-                                    : "bg-blue-500"
-                                }`}
-                              >
+                              <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-green-500 text-white">
                                 {item.badge}
                               </span>
                             )}
@@ -435,13 +562,25 @@ const Header = () => {
                               </h4>
                               <ul className="ml-2 mt-1 space-y-1">
                                 {category.items.map((subItem) => (
-                                  <li key={subItem}>
+                                  <li
+                                    key={
+                                      typeof subItem === "string"
+                                        ? subItem
+                                        : subItem.name
+                                    }
+                                  >
                                     <Link
-                                      href="#"
+                                      href={
+                                        typeof subItem === "string"
+                                          ? "#"
+                                          : subItem.path
+                                      }
                                       className="text-gray-700 hover:text-orange-500 transition-colors"
                                       onClick={closeMobileMenu}
                                     >
-                                      {subItem}
+                                      {typeof subItem === "string"
+                                        ? subItem
+                                        : subItem.name}
                                     </Link>
                                   </li>
                                 ))}
@@ -458,15 +597,7 @@ const Header = () => {
                       >
                         {item.name}
                         {item.badge && (
-                          <span
-                            className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                              item.badge === "HOT"
-                                ? "bg-green-500"
-                                : item.badge === "SALE"
-                                ? "bg-rose-500"
-                                : "bg-blue-500"
-                            }`}
-                          >
+                          <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-green-500 text-white">
                             {item.badge}
                           </span>
                         )}

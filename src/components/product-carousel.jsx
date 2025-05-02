@@ -13,6 +13,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Autoplay from "embla-carousel-autoplay";
+import Link from "next/link";
 
 const products = [
   {
@@ -200,16 +201,18 @@ export default function ProductCarousel() {
             ))}
           </CarouselContent>
           <div className="flex items-center justify-center mt-8 gap-2">
-            <CarouselPrevious className="relative static left-auto right-auto translate-y-0 bg-orange-500 text-white hover:bg-orange-600 hover:text-white" />
-            <CarouselNext className="relative static left-auto right-auto translate-y-0 bg-orange-500 text-white hover:bg-orange-600 hover:text-white" />
+            <CarouselPrevious className=" static left-auto right-auto translate-y-0 bg-orange-500 text-white hover:bg-orange-600 hover:text-white" />
+            <CarouselNext className=" static left-auto right-auto translate-y-0 bg-orange-500 text-white hover:bg-orange-600 hover:text-white" />
           </div>
         </Carousel>
 
         {/* See more button */}
         <div className="flex justify-center mt-12">
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg transition-colors duration-300">
-            SEE MORE
-          </Button>
+          <Link href="/products">
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white transition-colors duration-300">
+              See More Products
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
