@@ -498,7 +498,18 @@ const Header = () => {
                   </span>
                 )}
               </Link>
+
               <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <ShoppingCart size={20} />
+                    {cartItemCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {cartItemCount}
+                      </span>
+                    )}
+                  </Button>
+                </SheetTrigger>
                 <SheetContent side="right" className="w-[350px] sm:w-[450px]">
                   <SheetHeader>
                     <SheetTitle>Your Cart</SheetTitle>
