@@ -189,13 +189,13 @@ const Header = () => {
       },
     },
     {
-      name: "About",
-      path: "/about",
+      name: "Categories",
+      path: "/products?category=protein",
       megaMenu: null,
     },
     {
-      name: "Blog",
-      path: "/blog",
+      name: "About ",
+      path: "/about",
       megaMenu: null,
     },
     {

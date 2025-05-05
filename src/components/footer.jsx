@@ -71,7 +71,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full bg-gradient-to-b from-slate-800 to-slate-900 text-white">
+    <footer className="w-full bg-[#1d283a] text-white">
       {/* Newsletter Section */}
       {/* <div className="bg-orange-600 py-8">
         <motion.div
