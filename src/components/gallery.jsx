@@ -106,7 +106,9 @@ export default function Gallery() {
               }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="text-white text-xl sm:text-2xl font-medium">{item.name}</h3>
+              <h3 className="text-white text-xl sm:text-2xl font-medium">
+                {item.name}
+              </h3>
             </motion.div>
 
             <motion.button
@@ -116,8 +118,8 @@ export default function Gallery() {
               style={{
                 opacity: hoveredIndex === index ? 1 : 0,
               }}
-             
-              whileTap={{ scale: 0.98 }}
+              whiteHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
               {item.buttonText}
             </motion.button>
