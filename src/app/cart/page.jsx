@@ -83,7 +83,7 @@ const CartPage = () => {
           />
           <h1 className="text-2xl font-bold mb-2">Your cart is empty</h1>
           <p className="text-gray-500 mb-6">
-            Looks like you haven't added any products to your cart yet.
+            Looks like you haven&apos;t added any products to your cart yet.
           </p>
           <Link
             href="/products"

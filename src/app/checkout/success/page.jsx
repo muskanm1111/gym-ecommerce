@@ -57,7 +57,7 @@ const CheckoutSuccessPage = () => {
                 </span>
                 <span>
                   <span className="font-medium">Order Confirmation:</span>{" "}
-                  You'll receive an email with your order details shortly.
+                  You&apos;ll receive an email with your order details shortly.
                 </span>
               </li>
               <li className="flex">
@@ -65,7 +65,7 @@ const CheckoutSuccessPage = () => {
                   2
                 </span>
                 <span>
-                  <span className="font-medium">Processing:</span> We'll process
+                  <span className="font-medium">Processing:</span> We&apos;ll process
                   your order and prepare it for shipping.
                 </span>
               </li>
@@ -75,7 +75,7 @@ const CheckoutSuccessPage = () => {
                 </span>
                 <span>
                   <span className="font-medium">Shipping:</span> Once your order
-                  ships, you'll receive tracking information via email.
+                  ships, you&apos;ll receive tracking information via email.
                 </span>
               </li>
               <li className="flex">
