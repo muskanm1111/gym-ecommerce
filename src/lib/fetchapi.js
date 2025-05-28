@@ -106,7 +106,7 @@ async function performFetch(url, options) {
         // Try to parse text as JSON anyway
         data = JSON.parse(text);
       } catch (e) {
-        // If it's not parsable JSON, create a minimal response object
+        // If it's not parseable JSON, create a minimal response object
         data = {
           success: response.ok,
           message: text || (response.ok ? "Success" : "Request failed"),
